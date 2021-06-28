@@ -135,6 +135,7 @@ func (a Artifact) Inspect(ctx context.Context) (types.ArtifactReference, error) 
 
 	return types.ArtifactReference{
 		Name:        a.image.Name(),
+		Type:        types.ArtifactContainerImage,
 		ID:          finalImageKey,
 		BlobIDs:     cacheLayerKeys,
 		RepoTags:    a.image.RepoTags(),
