@@ -28,6 +28,7 @@ var (
 )
 
 type AnalysisTarget struct {
+	Dir      string
 	FilePath string
 	Content  []byte
 }
@@ -224,7 +225,7 @@ func (a Analyzer) AnalyzeFile(ctx context.Context, wg *sync.WaitGroup, limit *se
 				return
 			}
 			result[a.CacheType()].Merge(ret)
-		}(d, AnalysisTarget{FilePath: filePath, Content: b})
+		}(d, AnalysisTarget{Dir: dir, FilePath: filePath, Content: b})
 	}
 	return nil
 }
