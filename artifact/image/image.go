@@ -235,7 +235,7 @@ func (a Artifact) inspectLayer(ctx context.Context, diffID string) (map[types.Ca
 	}
 	limit := semaphore.NewWeighted(parallel)
 	opqDirs, whFiles, err := walker.WalkLayerTar(cr, func(filePath string, info os.FileInfo, opener analyzer.Opener) error {
-		if err = a.analyzer.AnalyzeFile(ctx, &wg, limit, resultMap, "", filePath, info, opener); err != nil {
+		if err = a.analyzer.AnalyzeFile(ctx, &wg, limit, resultMap, filePath, info, opener); err != nil {
 			return xerrors.Errorf("failed to analyze %s: %w", filePath, err)
 		}
 		return nil
