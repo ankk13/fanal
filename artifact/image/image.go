@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"path"
+	"path/filepath"
 	"reflect"
+	"strings"
 	"sync"
 
 	dpkgPkgLicense "github.com/aquasecurity/fanal/analyzer/pkg/dpkgpkglicenses"
@@ -21,6 +24,7 @@ import (
 	"github.com/aquasecurity/fanal/hook"
 	"github.com/aquasecurity/fanal/log"
 	"github.com/aquasecurity/fanal/types"
+	"github.com/aquasecurity/fanal/utils"
 	"github.com/aquasecurity/fanal/walker"
 )
 
@@ -236,7 +240,7 @@ func (a Artifact) inspectLayer(ctx context.Context, diffID string) (types.BlobIn
 	result.Sort()
 
 	result.PackageInfos = PostProcessorDpkg(result.PackageInfos)
-
+	result.Applications = PostProcessorJs(result.Applications)
 	blobInfo := types.BlobInfo{
 		SchemaVersion: types.BlobJSONSchemaVersion,
 		Digest:        layerDigest,
@@ -345,4 +349,36 @@ func PostProcessorDpkg(pkgInfos []types.PackageInfo) []types.PackageInfo {
 		return pkgWithVersion
 	}
 	return pkgInfos
+}
+
+// PostProcessorJs excludes Javascript libraries if same js path exists for any NPM package
+func PostProcessorJs(librariesInfo []types.Application) []types.Application {
+	var npmPaths []string
+	for _, libraryDetails := range librariesInfo {
+		if libraryDetails.Type == types.Npm {
+			npmPaths = append(npmPaths, libraryDetails.FilePath)
+
+		}
+	}
+	if len(npmPaths) > 0 {
+		var processedLibraryInfo []types.Application
+		for _, libraryDetails := range librariesInfo {
+			if libraryDetails.Type == types.JavaScript {
+				dirPath, _ := filepath.Split(libraryDetails.FilePath)
+				if utils.StringInSlice(path.Join(dirPath, "package-lock.json"), npmPaths) {
+					continue
+				}
+				if strings.HasSuffix(dirPath, "/src/") || strings.HasSuffix(dirPath, "/dist/") || strings.HasSuffix(dirPath, "/js/") {
+					dirPath, _ = filepath.Split(strings.TrimSuffix(dirPath, "/"))
+					if utils.StringInSlice(path.Join(dirPath, "package-lock.json"), npmPaths) {
+						continue
+					}
+				}
+			}
+			processedLibraryInfo = append(processedLibraryInfo, libraryDetails)
+		}
+		return processedLibraryInfo
+	}
+
+	return librariesInfo
 }
