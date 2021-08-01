@@ -24,7 +24,9 @@ const (
 	TypeDpkg Type = "dpkg"
 	TypeRpm  Type = "rpm"
 
-	// ============================
+	//dpkg license
+	TypeDpkgPkgLicense Type = "dpkgPkgLicense"
+
 	// Programming Language Package
 	// ============================
 
