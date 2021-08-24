@@ -17,6 +17,7 @@ import (
 	"github.com/aquasecurity/fanal/artifact"
 	"github.com/aquasecurity/fanal/cache"
 	"github.com/aquasecurity/fanal/config/scanner"
+	"github.com/aquasecurity/fanal/hook"
 	"github.com/aquasecurity/fanal/image"
 	"github.com/aquasecurity/fanal/log"
 	"github.com/aquasecurity/fanal/types"
@@ -27,20 +28,24 @@ const (
 	parallel = 5
 )
 
-var defaultDisabledAnalyzers = []analyzer.Type{
-	// Do not scan go.sum in container images, only scan go binaries
-	analyzer.TypeGoMod,
+var (
+	defaultDisabledAnalyzers = []analyzer.Type{
+		// Do not scan go.sum in container images, only scan go binaries
+		analyzer.TypeGoMod,
 
-	// Do not scan requirements.txt, Pipfile.lock and poetry.lock in container images, only scan egg and wheel
-	analyzer.TypePip,
-	analyzer.TypePipenv,
-	analyzer.TypePoetry,
-}
+		// Do not scan requirements.txt, Pipfile.lock and poetry.lock in container images, only scan egg and wheel
+		analyzer.TypePip,
+		analyzer.TypePipenv,
+		analyzer.TypePoetry,
+	}
+	defaultDisabledHooks = []hook.Type{}
+)
 
 type Artifact struct {
 	image               image.Image
 	caches              []cache.ArtifactCache
 	analyzer            analyzer.Analyzer
+	hookManager         hook.Manager
 	scanner             scanner.Scanner
 	configScannerOption config.ScannerOption
 }
@@ -59,7 +64,8 @@ func NewArtifact(img image.Image, c []cache.ArtifactCache, disabled []analyzer.T
 		return nil, xerrors.Errorf("scanner error: %w", err)
 	}
 
-	disabled = append(disabled, defaultDisabledAnalyzers...)
+	disabledAnalyzers = append(disabledAnalyzers, defaultDisabledAnalyzers...)
+	disabledHooks = append(disabledHooks, defaultDisabledHooks...)
 
 	return Artifact{
 		image:               img,
@@ -155,7 +161,7 @@ func (a Artifact) Inspect(ctx context.Context) (types.ArtifactReference, error) 
 
 func (a Artifact) calcCacheKeys(imageID string, diffIDs []string, cacheType types.CacheType) (string, []string, map[string]string, error) {
 	// Pass an empty config scanner option so that the cache key can be the same, even when policies are updated.
-	imageKey, err := cache.CalcKey(imageID, a.analyzer.ImageConfigAnalyzerVersions(), &config.ScannerOption{})
+	imageKey, err := cache.CalcKey(imageID, a.analyzer.ImageConfigAnalyzerVersions(), hookVersions, &config.ScannerOption{})
 	if err != nil {
 		return "", nil, nil, err
 	}

@@ -21,6 +21,7 @@ import (
 	"github.com/aquasecurity/fanal/artifact/local"
 	"github.com/aquasecurity/fanal/artifact/remote"
 	"github.com/aquasecurity/fanal/cache"
+	_ "github.com/aquasecurity/fanal/hook/all"
 	"github.com/aquasecurity/fanal/image"
 	"github.com/aquasecurity/fanal/types"
 	"github.com/aquasecurity/fanal/utils"
@@ -145,7 +146,7 @@ func archiveAction(c *cli.Context, fsCache cache.Cache) error {
 }
 
 func fsAction(c *cli.Context, fsCache cache.Cache) error {
-	art, err := local.NewArtifact(c.Args().First(), fsCache, nil, config.ScannerOption{
+	art, err := local.NewArtifact(c.Args().First(), fsCache, nil, nil, config.ScannerOption{
 		Namespaces:  []string{"appshield"},
 		PolicyPaths: c.StringSlice("policy"),
 	})
@@ -232,5 +233,5 @@ func archiveImageArtifact(imagePath string, c cache.ArtifactCache) (artifact.Art
 }
 
 func remoteArtifact(dir string, c cache.ArtifactCache) (artifact.Artifact, func(), error) {
-	return remote.NewArtifact(dir, c, nil, config.ScannerOption{})
+	return remote.NewArtifact(dir, c, nil, nil, config.ScannerOption{})
 }
