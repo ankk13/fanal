@@ -71,7 +71,6 @@ func ApplyLayers(layers []types.BlobInfo) types.ArtifactDetail {
 	nestedMap := nested.Nested{}
 	var mergedLayer types.ArtifactDetail
 	for _, layer := range layers {
-		mergedLayer.Size += layer.Size
 		for _, opqDir := range layer.OpaqueDirs {
 			_ = nestedMap.DeleteByString(opqDir, sep)
 		}

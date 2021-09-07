@@ -251,7 +251,7 @@ func (a Artifact) inspectLayer(ctx context.Context, diffID string) (map[types.Ca
 		resultMap[cache.Type()] = new(analyzer.AnalysisResult)
 	}
 	limit := semaphore.NewWeighted(parallel)
-	opqDirs, whFiles, layerSize, err := walker.WalkLayerTar(cr, func(filePath string, info os.FileInfo, opener analyzer.Opener) error {
+	opqDirs, whFiles, err := walker.WalkLayerTar(cr, func(filePath string, info os.FileInfo, opener analyzer.Opener) error {
 		if err = a.analyzer.AnalyzeFile(ctx, &wg, limit, resultMap, filePath, info, opener); err != nil {
 			return xerrors.Errorf("failed to analyze %s: %w", filePath, err)
 		}
@@ -277,7 +277,6 @@ func (a Artifact) inspectLayer(ctx context.Context, diffID string) (map[types.Ca
 			SchemaVersion:     types.BlobJSONSchemaVersion,
 			Digest:            layerDigest,
 			DiffID:            diffID,
-			Size:              int(layerSize),
 			Misconfigurations: misconfs,
 			OpaqueDirs:        opqDirs,
 			WhiteoutFiles:     whFiles,
