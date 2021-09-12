@@ -68,7 +68,8 @@ type AnalysisResult struct {
 }
 
 func (r *AnalysisResult) isEmpty() bool {
-	return r.OS == nil && len(r.PackageInfos) == 0 && len(r.Applications) == 0 && len(r.Configs) == 0 && r.CustomResources == nil
+	return r.OS == nil && len(r.PackageInfos) == 0 && len(r.Applications) == 0 &&
+		len(r.Configs) == 0 && len(r.SystemInstalledFiles) == 0 && r.CustomResources == nil
 }
 
 func (r *AnalysisResult) Sort() {
@@ -133,6 +134,8 @@ func (r *AnalysisResult) Merge(new *AnalysisResult) {
 	for _, m := range new.Configs {
 		r.Configs = append(r.Configs, m)
 	}
+
+	r.SystemInstalledFiles = append(r.SystemInstalledFiles, new.SystemInstalledFiles...)
 }
 
 type Analyzer struct {
