@@ -13,6 +13,7 @@ import (
 	"github.com/aquasecurity/fanal/analyzer/config"
 	"github.com/aquasecurity/fanal/cache"
 	"github.com/aquasecurity/fanal/hook"
+	_ "github.com/aquasecurity/fanal/hook/all"
 	"github.com/aquasecurity/fanal/types"
 )
 

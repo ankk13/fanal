@@ -165,15 +165,16 @@ func (a Artifact) Inspect(ctx context.Context) (types.ArtifactReference, error) 
 
 func (a Artifact) calcCacheKeys(imageID string, diffIDs []string, cacheType types.CacheType) (string, []string, map[string]string, error) {
 	// Pass an empty config scanner option so that the cache key can be the same, even when policies are updated.
-	imageKey, err := cache.CalcKey(imageID, a.analyzer.ImageConfigAnalyzerVersions(), hookVersions, &config.ScannerOption{})
+	imageKey, err := cache.CalcKey(imageID, a.analyzer.ImageConfigAnalyzerVersions(), nil, &config.ScannerOption{})
 	if err != nil {
 		return "", nil, nil, err
 	}
 
 	layerKeyMap := map[string]string{}
+	hookVersions := a.hookManager.Versions()
 	var layerKeys []string
 	for _, diffID := range diffIDs {
-		blobKey, err := cache.CalcKey(diffID, a.analyzer.AnalyzerVersions(cacheType), &a.configScannerOption)
+		blobKey, err := cache.CalcKey(diffID, a.analyzer.AnalyzerVersions(cacheType), hookVersions, &a.configScannerOption)
 		if err != nil {
 			return "", nil, nil, err
 		}
