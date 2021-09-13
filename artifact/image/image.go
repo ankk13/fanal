@@ -3,6 +3,7 @@ package image
 import (
 	"context"
 	"encoding/json"
+	"image"
 	"io"
 	"os"
 	"reflect"
@@ -18,7 +19,6 @@ import (
 	"github.com/aquasecurity/fanal/cache"
 	"github.com/aquasecurity/fanal/config/scanner"
 	"github.com/aquasecurity/fanal/hook"
-	"github.com/aquasecurity/fanal/image"
 	"github.com/aquasecurity/fanal/log"
 	"github.com/aquasecurity/fanal/types"
 	"github.com/aquasecurity/fanal/walker"
@@ -57,7 +57,7 @@ type Artifact struct {
 type layerkeyDiffIdMap map[string]string
 type cacheLayerKeyMap map[types.CacheType]layerkeyDiffIdMap
 
-func NewArtifact(img image.Image, c []cache.ArtifactCache, disabled []analyzer.Type, opt config.ScannerOption) (artifact.Artifact, error) {
+func NewArtifact(img image.Image, c []cache.ArtifactCache, disabledAnalyzers []analyzer.Type, disabledHooks []hook.Type, opt config.ScannerOption) (artifact.Artifact, error) {
 	// Register config analyzers
 	if err := config.RegisterConfigAnalyzers(opt.FilePatterns); err != nil {
 		return nil, xerrors.Errorf("config scanner error: %w", err)
@@ -89,6 +89,11 @@ func (a Artifact) Inspect(ctx context.Context) (types.ArtifactReference, error) 
 	diffIDs, err := a.image.LayerIDs()
 	if err != nil {
 		return types.ArtifactReference{}, xerrors.Errorf("unable to get layer IDs: %w", err)
+	}
+
+	configFile, err := a.image.ConfigFile()
+	if err != nil {
+		return types.ArtifactReference{}, xerrors.Errorf("unable to get the image's config file: %w", err)
 	}
 
 	// Debug
@@ -153,14 +158,18 @@ func (a Artifact) Inspect(ctx context.Context) (types.ArtifactReference, error) 
 	}
 
 	return types.ArtifactReference{
-		Name:        a.image.Name(),
-		Type:        types.ArtifactContainerImage,
-		ID:          finalImageKey,
-		BlobIDs:     cacheLayerKeys,
-		RepoTags:    a.image.RepoTags(),
-		RepoDigests: a.image.RepoDigests(),
+		Name:    a.image.Name(),
+		Type:    types.ArtifactContainerImage,
+		ID:      finalImageKey,
+		BlobIDs: cacheLayerKeys,
+		ImageMetadata: &types.ImageMetadata{
+			ID:          imageID,
+			DiffIDs:     diffIDs,
+			RepoTags:    a.image.RepoTags(),
+			RepoDigests: a.image.RepoDigests(),
+			ConfigFile:  *configFile,
+		},
 	}, nil
-
 }
 
 func (a Artifact) calcCacheKeys(imageID string, diffIDs []string, cacheType types.CacheType) (string, []string, map[string]string, error) {
@@ -336,7 +345,7 @@ func (a Artifact) inspectConfig(imageID string, osFound types.OS, cache cache.Ar
 	pkgs := a.analyzer.AnalyzeImageConfig(osFound, configBlob)
 
 	var s1 v1.ConfigFile
-	if err := json.Unmarshal(configBlob, &s1); err != nil {
+	if err = json.Unmarshal(configBlob, &s1); err != nil {
 		return xerrors.Errorf("json marshal error: %w", err)
 	}
 

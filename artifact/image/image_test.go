@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/xerrors"
@@ -101,11 +102,47 @@ func TestArtifact_Inspect(t *testing.T) {
 				},
 			},
 			want: types.ArtifactReference{
-				Name: "../../test/testdata/alpine-311.tar.gz",
-				ID:   "sha256:cdb49675542ff0051aaf7bab6c7a81b6fe275a7dd57d1e0317724a51edb7d6a6",
-				Type: types.ArtifactContainerImage,
+				Name:    "../../test/testdata/alpine-311.tar.gz",
+				Type:    types.ArtifactContainerImage,
+				ID:      "sha256:59c4082ceb491faefd44cf9a006dd24c8f57b44b438f081251c90ea1367ca043",
 				BlobIDs: map[types.CacheType][]string{
 					types.BuiltInCache: []string{"sha256:c49e98b78d17b37b5e7e2e1032ebf9fa1b7d0b7f7998e37b2f0918739a6ffd7f"},
+				ImageMetadata: &types.ImageMetadata{
+					ID: "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
+					DiffIDs: []string{
+						"sha256:beee9f30bc1f711043e78d4a2be0668955d4b761d587d6f60c2c8dc081efb203",
+					},
+					ConfigFile: v1.ConfigFile{
+						Architecture:  "amd64",
+						Author:        "",
+						Container:     "fb71ddde5f6411a82eb056a9190f0cc1c80d7f77a8509ee90a2054428edb0024",
+						Created:       v1.Time{Time: time.Date(2020, 3, 23, 21, 19, 34, 196162891, time.UTC)},
+						DockerVersion: "18.09.7",
+						History: []v1.History{
+							{
+								Author:     "",
+								Created:    v1.Time{Time: time.Date(2020, 3, 23, 21, 19, 34, 27725872, time.UTC)},
+								CreatedBy:  "/bin/sh -c #(nop) ADD file:0c4555f363c2672e350001f1293e689875a3760afe7b3f9146886afe67121cba in / ",
+								Comment:    "",
+								EmptyLayer: false,
+							},
+							{
+								Author:     "",
+								Created:    v1.Time{Time: time.Date(2020, 3, 23, 21, 19, 34, 196162891, time.UTC)},
+								CreatedBy:  "/bin/sh -c #(nop)  CMD [\"/bin/sh\"]",
+								Comment:    "",
+								EmptyLayer: true,
+							},
+						},
+						OS:     "linux",
+						RootFS: v1.RootFS{Type: "layers", DiffIDs: []v1.Hash{v1.Hash{Algorithm: "sha256", Hex: "beee9f30bc1f711043e78d4a2be0668955d4b761d587d6f60c2c8dc081efb203"}}},
+						Config: v1.Config{
+							Cmd:      []string{"/bin/sh"},
+							Env:      []string{"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"},
+							Hostname: "", Image: "sha256:74df73bb19fbfc7fb5ab9a8234b3d98ee2fb92df5b824496679802685205ab8c",
+							ArgsEscaped: true,
+						},
+					},
 				},
 			},
 		},
@@ -250,6 +287,72 @@ func TestArtifact_Inspect(t *testing.T) {
 						"sha256:1d9a1222903af7cad433a122d81cb35084541addd878e7cc11821c93ba435480",
 					},
 				},
+				ImageMetadata: &types.ImageMetadata{
+					ID: "sha256:58701fd185bda36cab0557bb6438661831267aa4a9e0b54211c4d5317a48aff4",
+					DiffIDs: []string{
+						"sha256:932da51564135c98a49a34a193d6cd363d8fa4184d957fde16c9d8527b3f3b02",
+						"sha256:dffd9992ca398466a663c87c92cfea2a2db0ae0cf33fcb99da60eec52addbfc5",
+						"sha256:24df0d4e20c0f42d3703bf1f1db2bdd77346c7956f74f423603d651e8e5ae8a7",
+						"sha256:a4595c43a874856bf95f3bfc4fbf78bbaa04c92c726276d4f64193a47ced0566",
+					},
+					ConfigFile: v1.ConfigFile{
+						Architecture:  "amd64",
+						Author:        "",
+						Created:       v1.Time{Time: time.Date(2020, 2, 16, 10, 38, 41, 114114788, time.UTC)},
+						DockerVersion: "19.03.5",
+						History: []v1.History{
+							{
+								Author:     "Bazel",
+								Created:    v1.Time{Time: time.Date(1970, 01, 01, 0, 0, 0, 0, time.UTC)},
+								CreatedBy:  "bazel build ...",
+								EmptyLayer: false,
+							},
+							{
+								Author:     "Bazel",
+								Created:    v1.Time{Time: time.Date(1970, 01, 01, 0, 0, 0, 0, time.UTC)},
+								CreatedBy:  "bazel build ...",
+								EmptyLayer: false,
+							},
+							{
+								Author:     "",
+								Created:    v1.Time{Time: time.Date(2020, 2, 16, 10, 38, 40, 976530082, time.UTC)},
+								CreatedBy:  "/bin/sh -c #(nop) COPY file:842584685f26edb24dc305d76894f51cfda2bad0c24a05e727f9d4905d184a70 in /php-app/composer.lock ",
+								Comment:    "",
+								EmptyLayer: false,
+							},
+							{
+								Author:     "",
+								Created:    v1.Time{Time: time.Date(2020, 2, 16, 10, 38, 41, 114114788, time.UTC)},
+								CreatedBy:  "/bin/sh -c #(nop) COPY file:c6d0373d380252b91829a5bb3c81d5b1afa574c91cef7752d18170a231c31f6d in /ruby-app/Gemfile.lock ",
+								Comment:    "",
+								EmptyLayer: false,
+							},
+						},
+						OS: "linux",
+						RootFS: v1.RootFS{
+							Type: "layers",
+							DiffIDs: []v1.Hash{
+								{
+									Algorithm: "sha256",
+									Hex:       "932da51564135c98a49a34a193d6cd363d8fa4184d957fde16c9d8527b3f3b02",
+								}, {
+									Algorithm: "sha256",
+									Hex:       "dffd9992ca398466a663c87c92cfea2a2db0ae0cf33fcb99da60eec52addbfc5",
+								}, {
+									Algorithm: "sha256",
+									Hex:       "24df0d4e20c0f42d3703bf1f1db2bdd77346c7956f74f423603d651e8e5ae8a7",
+								}, {
+									Algorithm: "sha256",
+									Hex:       "a4595c43a874856bf95f3bfc4fbf78bbaa04c92c726276d4f64193a47ced0566",
+								},
+							},
+						},
+						Config: v1.Config{
+							Env:   []string{"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"},
+							Image: "sha256:916390dcf84a1c7852e298f24fb5389a6e7801102086924e55eb08cd58d6a741",
+						},
+					},
+				},
 			},
 		},
 		{
@@ -329,6 +432,62 @@ func TestArtifact_Inspect(t *testing.T) {
 						"sha256:135da42db81f43536be866113da80b5d330c8e3b2217108feb41e0da145af291",
 						"sha256:21dbb93b630abd81afcd42a7bc7f9147da08530566f744237f37474100e9ef4f",
 						"sha256:c47cef89b2d1014811c738f0b783f0ded8bddb5cff5ebf22672e7753f81941fa",
+					},
+				},
+				ImageMetadata: &types.ImageMetadata{
+					ID: "sha256:58701fd185bda36cab0557bb6438661831267aa4a9e0b54211c4d5317a48aff4",
+					DiffIDs: []string{
+						"sha256:932da51564135c98a49a34a193d6cd363d8fa4184d957fde16c9d8527b3f3b02",
+						"sha256:dffd9992ca398466a663c87c92cfea2a2db0ae0cf33fcb99da60eec52addbfc5",
+						"sha256:24df0d4e20c0f42d3703bf1f1db2bdd77346c7956f74f423603d651e8e5ae8a7",
+						"sha256:a4595c43a874856bf95f3bfc4fbf78bbaa04c92c726276d4f64193a47ced0566",
+					},
+					ConfigFile: v1.ConfigFile{
+						Architecture:  "amd64",
+						Author:        "",
+						Created:       v1.Time{Time: time.Date(2020, 2, 16, 10, 38, 41, 114114788, time.UTC)},
+						DockerVersion: "19.03.5",
+						History: []v1.History{
+							{
+								Author:     "Bazel",
+								Created:    v1.Time{Time: time.Date(1970, 01, 01, 0, 0, 0, 0, time.UTC)},
+								CreatedBy:  "bazel build ...",
+								Comment:    "",
+								EmptyLayer: false,
+							},
+							{
+								Author:     "Bazel",
+								Created:    v1.Time{Time: time.Date(1970, 01, 01, 0, 0, 0, 0, time.UTC)},
+								CreatedBy:  "bazel build ...",
+								Comment:    "",
+								EmptyLayer: false,
+							},
+							{
+								Created:    v1.Time{Time: time.Date(2020, 2, 16, 10, 38, 40, 976530082, time.UTC)},
+								CreatedBy:  "/bin/sh -c #(nop) COPY file:842584685f26edb24dc305d76894f51cfda2bad0c24a05e727f9d4905d184a70 in /php-app/composer.lock ",
+								Comment:    "",
+								EmptyLayer: false,
+							},
+							{
+								Created:    v1.Time{Time: time.Date(2020, 2, 16, 10, 38, 41, 114114788, time.UTC)},
+								CreatedBy:  "/bin/sh -c #(nop) COPY file:c6d0373d380252b91829a5bb3c81d5b1afa574c91cef7752d18170a231c31f6d in /ruby-app/Gemfile.lock ",
+								Comment:    "",
+								EmptyLayer: false,
+							},
+						},
+						OS: "linux",
+						RootFS: v1.RootFS{Type: "layers", DiffIDs: []v1.Hash{v1.Hash{
+							Algorithm: "sha256", Hex: "932da51564135c98a49a34a193d6cd363d8fa4184d957fde16c9d8527b3f3b02"},
+							{Algorithm: "sha256", Hex: "dffd9992ca398466a663c87c92cfea2a2db0ae0cf33fcb99da60eec52addbfc5"},
+							{Algorithm: "sha256", Hex: "24df0d4e20c0f42d3703bf1f1db2bdd77346c7956f74f423603d651e8e5ae8a7"},
+							{Algorithm: "sha256", Hex: "a4595c43a874856bf95f3bfc4fbf78bbaa04c92c726276d4f64193a47ced0566"},
+						},
+						},
+						Config: v1.Config{
+							Env:      []string{"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"},
+							Hostname: "",
+							Image:    "sha256:916390dcf84a1c7852e298f24fb5389a6e7801102086924e55eb08cd58d6a741",
+						},
 					},
 				},
 			},
