@@ -102,12 +102,13 @@ func TestArtifact_Inspect(t *testing.T) {
 				},
 			},
 			want: types.ArtifactReference{
-				Name:    "../../test/testdata/alpine-311.tar.gz",
-				Type:    types.ArtifactContainerImage,
-				ID:      "sha256:59c4082ceb491faefd44cf9a006dd24c8f57b44b438f081251c90ea1367ca043",
+				Name: "../../test/testdata/alpine-311.tar.gz",
+				Type: types.ArtifactContainerImage,
+				ID:   "sha256:59c4082ceb491faefd44cf9a006dd24c8f57b44b438f081251c90ea1367ca043",
 				BlobIDs: map[types.CacheType][]string{
 					types.BuiltInCache: []string{"sha256:c49e98b78d17b37b5e7e2e1032ebf9fa1b7d0b7f7998e37b2f0918739a6ffd7f"},
-				ImageMetadata: &types.ImageMetadata{
+				},
+				ImageMetadata: types.ImageMetadata{
 					ID: "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
 					DiffIDs: []string{
 						"sha256:beee9f30bc1f711043e78d4a2be0668955d4b761d587d6f60c2c8dc081efb203",
@@ -287,7 +288,7 @@ func TestArtifact_Inspect(t *testing.T) {
 						"sha256:1d9a1222903af7cad433a122d81cb35084541addd878e7cc11821c93ba435480",
 					},
 				},
-				ImageMetadata: &types.ImageMetadata{
+				ImageMetadata: types.ImageMetadata{
 					ID: "sha256:58701fd185bda36cab0557bb6438661831267aa4a9e0b54211c4d5317a48aff4",
 					DiffIDs: []string{
 						"sha256:932da51564135c98a49a34a193d6cd363d8fa4184d957fde16c9d8527b3f3b02",
@@ -434,7 +435,7 @@ func TestArtifact_Inspect(t *testing.T) {
 						"sha256:c47cef89b2d1014811c738f0b783f0ded8bddb5cff5ebf22672e7753f81941fa",
 					},
 				},
-				ImageMetadata: &types.ImageMetadata{
+				ImageMetadata: types.ImageMetadata{
 					ID: "sha256:58701fd185bda36cab0557bb6438661831267aa4a9e0b54211c4d5317a48aff4",
 					DiffIDs: []string{
 						"sha256:932da51564135c98a49a34a193d6cd363d8fa4184d957fde16c9d8527b3f3b02",

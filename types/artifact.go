@@ -98,7 +98,7 @@ type ArtifactReference struct {
 	Type          ArtifactType
 	ID            string
 	BlobIDs       map[CacheType][]string
-	ImageMetadata *ImageMetadata
+	ImageMetadata ImageMetadata
 }
 
 type ImageMetadata struct {
