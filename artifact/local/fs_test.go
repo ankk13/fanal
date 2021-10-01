@@ -11,6 +11,7 @@ import (
 	"github.com/aquasecurity/fanal/analyzer"
 	_ "github.com/aquasecurity/fanal/analyzer/all"
 	"github.com/aquasecurity/fanal/analyzer/config"
+	"github.com/aquasecurity/fanal/artifact"
 	"github.com/aquasecurity/fanal/cache"
 	"github.com/aquasecurity/fanal/hook"
 	_ "github.com/aquasecurity/fanal/hook/all"
@@ -24,6 +25,7 @@ func TestArtifact_Inspect(t *testing.T) {
 	tests := []struct {
 		name               string
 		fields             fields
+		artifactOpt        artifact.Option
 		scannerOpt         config.ScannerOption
 		disabledAnalyzers  []analyzer.Type
 		disabledHooks      []hook.Type
@@ -72,7 +74,9 @@ func TestArtifact_Inspect(t *testing.T) {
 			fields: fields{
 				dir: "./testdata",
 			},
-			disabledAnalyzers: []analyzer.Type{analyzer.TypeAlpine, analyzer.TypeApk},
+			artifactOpt: artifact.Option{
+				DisabledAnalyzers: []analyzer.Type{analyzer.TypeAlpine, analyzer.TypeApk},
+			},
 			putBlobExpectation: cache.ArtifactCachePutBlobExpectation{
 				Args: cache.ArtifactCachePutBlobArgs{
 					BlobID: "sha256:a35707b2eade5026a06aa27ea5177309f0266f617fe28d060f9cdac0274d0ec7",
@@ -136,7 +140,7 @@ func TestArtifact_Inspect(t *testing.T) {
 			c := new(cache.MockArtifactCache)
 			c.ApplyPutBlobExpectation(tt.putBlobExpectation)
 
-			a, err := NewArtifact(tt.fields.dir, c, tt.disabledAnalyzers, tt.disabledHooks, tt.scannerOpt)
+			a, err := NewArtifact(tt.fields.dir, c, tt.artifactOpt, tt.scannerOpt)
 			require.NoError(t, err)
 
 			got, err := a.Inspect(context.Background())
