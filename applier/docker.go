@@ -142,7 +142,7 @@ func ApplyLayers(layers []types.BlobInfo) types.ArtifactDetail {
 	return mergedLayer
 }
 
-// aggregate merges all packages installed by pip/gem/npm into each application
+// aggregate merges all packages installed by pip/gem/npm/jar into each application
 func aggregate(detail *types.ArtifactDetail) {
 	var apps []types.Application
 
@@ -150,6 +150,7 @@ func aggregate(detail *types.ArtifactDetail) {
 		types.PythonPkg: {Type: types.PythonPkg},
 		types.GemSpec:   {Type: types.GemSpec},
 		types.NodePkg:   {Type: types.NodePkg},
+		types.Jar:       {Type: types.Jar},
 	}
 
 	for _, app := range detail.Applications {
