@@ -43,7 +43,7 @@ func TestArtifact_Inspect(t *testing.T) {
 					BlobID: "sha256:6307f2de6bfe98c36109c01dce2645633ddfd6bde4f8a107f8005810fff28e04",
 					BlobInfo: types.BlobInfo{
 						SchemaVersion: types.BlobJSONSchemaVersion,
-						DiffID:        "sha256:0f88c2f4a441514ebd105e81527af76af15bed17d91c17ba3637397f8c4f1925",
+						DiffID:        "sha256:9eaa33f9952218e93b2b7678e0092c5eb809877c948af5ea19b5148c5857d9fa",
 						OS: &types.OS{
 							Family: "alpine",
 							Name:   "3.11.6",
@@ -82,7 +82,7 @@ func TestArtifact_Inspect(t *testing.T) {
 					BlobID: "sha256:a35707b2eade5026a06aa27ea5177309f0266f617fe28d060f9cdac0274d0ec7",
 					BlobInfo: types.BlobInfo{
 						SchemaVersion: types.BlobJSONSchemaVersion,
-						DiffID:        "sha256:3404e98968ad338dc60ef74c0dd5bdd893478415cd2296b0c265a5650b3ae4d6",
+						DiffID:        "sha256:8ad5ef100e762e3f4df37beb3f8231a782cea12ad9d39bda13fd5850d1b15d11",
 					},
 				},
 				Returns: cache.ArtifactCachePutBlobReturns{},
@@ -106,7 +106,7 @@ func TestArtifact_Inspect(t *testing.T) {
 					BlobID: "sha256:6307f2de6bfe98c36109c01dce2645633ddfd6bde4f8a107f8005810fff28e04",
 					BlobInfo: types.BlobInfo{
 						SchemaVersion: types.BlobJSONSchemaVersion,
-						DiffID:        "sha256:0f88c2f4a441514ebd105e81527af76af15bed17d91c17ba3637397f8c4f1925",
+						DiffID:        "sha256:9eaa33f9952218e93b2b7678e0092c5eb809877c948af5ea19b5148c5857d9fa",
 						OS: &types.OS{
 							Family: "alpine",
 							Name:   "3.11.6",
