@@ -703,7 +703,7 @@ func TestArtifact_Inspect(t *testing.T) {
 			img, err := image.NewArchiveImage(tt.imagePath)
 			require.NoError(t, err)
 
-			a, err := image2.NewArtifact(img, []cache.ArtifactCache{mockCache}, tt.disableAnalyzers, config.ScannerOption{})
+			a, err := image2.NewArtifact(img, []cache.ArtifactCache{mockCache}, tt.artifactOpt, config.ScannerOption{})
 			require.NoError(t, err)
 
 			got, err := a.Inspect(context.Background())

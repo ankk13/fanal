@@ -59,12 +59,13 @@ func RegisterConfigAnalyzer(analyzer configAnalyzer) {
 type Opener func() ([]byte, error)
 
 type AnalysisResult struct {
-	m               sync.Mutex
-	OS              *types.OS
-	PackageInfos    []types.PackageInfo
-	Applications    []types.Application
-	Configs         []types.Config
-	CustomResources []types.CustomResource
+	m                    sync.Mutex
+	OS                   *types.OS
+	PackageInfos         []types.PackageInfo
+	Applications         []types.Application
+	Configs              []types.Config
+	SystemInstalledFiles []string // A list of files installed by OS package manager
+	CustomResources      []types.CustomResource
 }
 
 func (r *AnalysisResult) isEmpty() bool {
@@ -197,7 +198,7 @@ func (a Analyzer) ImageConfigAnalyzerVersions() map[string]int {
 	return versions
 }
 
-func (a Analyzer) AnalyzeFile(ctx context.Context, wg *sync.WaitGroup, limit *semaphore.Weighted, result map[types.CacheType]*AnalysisResult,
+func (a Analyzer) AnalyzeFile(ctx context.Context, wg *sync.WaitGroup, limit *semaphore.Weighted, result map[types.CacheType]*AnalysisResult, dir,
 	filePath string, info os.FileInfo, opener Opener) error {
 	if info.IsDir() {
 		return nil

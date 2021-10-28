@@ -247,8 +247,8 @@ func (a Artifact) inspectLayer(ctx context.Context, diffID string) (map[types.Ca
 		resultMap[cache.Type()] = new(analyzer.AnalysisResult)
 	}
 	limit := semaphore.NewWeighted(parallel)
-	opqDirs, whFiles, err := walker.WalkLayerTar(r, func(filePath string, info os.FileInfo, opener analyzer.Opener) error {
-		if err = a.analyzer.AnalyzeFile(ctx, &wg, limit, resultMap, filePath, info, opener); err != nil {
+	opqDirs, whFiles, err := a.walker.Walk(r, func(filePath string, info os.FileInfo, opener analyzer.Opener) error {
+		if err = a.analyzer.AnalyzeFile(ctx, &wg, limit, resultMap, "", filePath, info, opener); err != nil {
 			return xerrors.Errorf("failed to analyze %s: %w", filePath, err)
 		}
 		return nil
@@ -323,7 +323,7 @@ func (a Artifact) isCompressed(l v1.Layer) bool {
 }
 
 func (a Artifact) inspectConfig(imageID string, osFound types.OS, cache cache.ArtifactCache) error {
-	configBlob, err := a.image.ConfigBlob()
+	configBlob, err := a.image.RawConfigFile()
 	if err != nil {
 		return xerrors.Errorf("unable to get config blob: %w", err)
 	}

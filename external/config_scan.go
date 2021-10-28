@@ -53,7 +53,7 @@ func (s ConfigScanner) Scan(dir string) ([]types.Misconfiguration, error) {
 
 	// Merge layers
 	a := applier.NewApplier(s.cache)
-	mergedLayer, err := a.ApplyLayers(result.ID, result.BlobIDs)
+	mergedLayer, err := a.ApplyLayers(result.ID, result.BlobIDs[types.BuiltInCache])
 	if !errors.Is(err, analyzer.ErrUnknownOS) && !errors.Is(err, analyzer.ErrNoPkgsDetected) {
 		return nil, err
 	}

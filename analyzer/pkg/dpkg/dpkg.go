@@ -222,6 +222,6 @@ func (a dpkgAnalyzer) Version() int {
 	return version
 }
 
-func (a debianPkgAnalyzer) CacheType() types.CacheType {
+func (a dpkgAnalyzer) CacheType() types.CacheType {
 	return types.BuiltInCache
 }
