@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 type DockerOption struct {
 	// Auth
 	UserName string
@@ -20,4 +22,6 @@ type DockerOption struct {
 	// SSL/TLS
 	InsecureSkipTLSVerify bool
 	NonSSL                bool
+
+	Timeout time.Duration
 }

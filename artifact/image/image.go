@@ -215,15 +215,16 @@ func (a Artifact) inspectLayer(ctx context.Context, diffID string) (types.BlobIn
 	result.Sort()
 
 	blobInfo := types.BlobInfo{
-		SchemaVersion: types.BlobJSONSchemaVersion,
-		Digest:        layerDigest,
-		DiffID:        diffID,
-		OS:            result.OS,
-		PackageInfos:  result.PackageInfos,
-		Applications:  result.Applications,
-		SystemFiles:   result.SystemInstalledFiles,
-		OpaqueDirs:    opqDirs,
-		WhiteoutFiles: whFiles,
+		SchemaVersion:   types.BlobJSONSchemaVersion,
+		Digest:          layerDigest,
+		DiffID:          diffID,
+		OS:              result.OS,
+		PackageInfos:    result.PackageInfos,
+		Applications:    result.Applications,
+		SystemFiles:     result.SystemInstalledFiles,
+		OpaqueDirs:      opqDirs,
+		WhiteoutFiles:   whFiles,
+		CustomResources: result.CustomResources,
 	}
 
 	// Call hooks to modify blob info
