@@ -9,18 +9,26 @@ import (
 	"github.com/aquasecurity/fanal/utils"
 )
 
-var (
-	appDirs    = []string{".git", "vendor"}
-	systemDirs = []string{"proc", "sys", "dev"}
-)
+type DefaultDirs struct {
+	AppDirs    []string
+	SystemDirs []string
+}
+
+func NewDefaultDirs() DefaultDirs {
+	return DefaultDirs{
+		AppDirs:    []string{".git", "vendor"},
+		SystemDirs: []string{"proc", "sys", "dev"},
+	}
+}
 
 const ThresholdSize = int64(200) << 20
 
 type WalkFunc func(filePath string, info os.FileInfo, opener analyzer.Opener) error
 
 type walker struct {
-	skipFiles []string
-	skipDirs  []string
+	skipFiles   []string
+	skipDirs    []string
+	skipBaseDir []string
 }
 
 func newWalker(skipFiles, skipDirs []string) walker {
@@ -30,16 +38,17 @@ func newWalker(skipFiles, skipDirs []string) walker {
 		skipFile = strings.TrimLeft(skipFile, "/")
 		cleanSkipFiles = append(cleanSkipFiles, skipFile)
 	}
-
-	for _, skipDir := range append(skipDirs, systemDirs...) {
+	var defaults = NewDefaultDirs()
+	for _, skipDir := range append(skipDirs, defaults.SystemDirs...) {
 		skipDir = filepath.Clean(filepath.ToSlash(skipDir))
 		skipDir = strings.TrimLeft(skipDir, "/")
 		cleanSkipDirs = append(cleanSkipDirs, skipDir)
 	}
 
 	return walker{
-		skipFiles: cleanSkipFiles,
-		skipDirs:  cleanSkipDirs,
+		skipFiles:   cleanSkipFiles,
+		skipDirs:    cleanSkipDirs,
+		skipBaseDir: defaults.AppDirs,
 	}
 }
 
@@ -57,7 +66,7 @@ func (w *walker) shouldSkipDir(dir string) bool {
 
 	// Skip application dirs (relative path)
 	base := filepath.Base(dir)
-	if utils.StringInSlice(base, appDirs) {
+	if utils.StringInSlice(base, w.skipBaseDir) {
 		return true
 	}
 
